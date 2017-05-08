@@ -1,0 +1,218 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool isAlreadyFound(vector<int> y, int x) {
+
+	bool check = false;
+
+	for (unsigned int i = 0; i < y.size(); i++) {
+
+		if (y[i] == x) {
+			check = true;
+			return check;
+		}
+
+	}
+
+	return check;
+
+}
+
+vector<char> makeRow(vector<vector<char>> x, int n, int i) {
+
+	vector<char> row(n);
+	for (int y = 0; y < n; y++) {
+
+		row[y] = x[i][y];
+
+	}
+
+	return row;
+
+}
+
+bool isThere(vector<char> x, int y) {
+
+	int counter = 0;
+
+	bool dink = false;
+
+	for (unsigned int i = 0; i < x.size(); i++) {
+		if (x[i] == 'Y') {
+			counter++;
+		}
+	}
+	if (counter >= y) {
+		dink = true;
+	}
+
+	return dink;
+
+}
+
+int findNextY(vector<char> x, int y) {
+
+	int lel;
+	int counter = 0;
+	for (int i = 0; counter <= y; i++) {
+
+		if (x[i] == 'Y') {
+			counter++;
+		}
+
+		if (counter == y) {
+			lel = i;
+			break;
+		}
+
+	}
+
+	return lel;
+
+}
+
+bool notPossible(vector<char> orig, vector<int> stor) {
+
+	if (stor.size() == 0) {
+		return false;
+	}
+
+	bool poss = false;
+
+	vector<int> findy;
+
+	for (unsigned int i = 0; i < orig.size(); i++) {
+		if (orig[i] == 'Y') {
+			findy.push_back(i);
+		}
+	}
+
+
+
+	sort(stor.begin(), stor.end());
+	sort(findy.begin(), findy.end());
+
+
+
+	if (findy.size() > stor.size()) {
+		if (	includes(	findy.begin(), findy.end(), stor.begin(), stor.end()	)	) {
+			poss = true;
+			return poss;
+		}}
+
+
+		else if (findy.size() <= stor.size()) {
+
+		if (includes(stor.begin(), stor.end(), findy.begin(), findy.end())) {
+			poss = true;
+			return poss;
+		}
+
+	}
+	return poss;
+}
+
+int main() {
+
+	int n;
+	cin >> n;
+
+	int tracker = 1;
+
+	char in;
+
+	vector<vector<char>> vec(n);
+
+	for (int i = 0; i < n; i++) {
+		vec[i].resize(n);
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+
+			cin >> in;
+			vec[i][j] = in;
+
+		}
+
+	}
+
+	vector<int> stor;
+	vector<char> row(n);
+	int place = 0;
+
+	for (unsigned int i = 0; stor.size() < n; i++) {
+
+		for (int j = 0; j < n; j++) {
+
+			if (place == n - 1 && stor.size() != n && notPossible(row,stor)==true) {
+				tracker++;
+				stor.clear();
+				i = 0;
+				j = 0;
+				place = 0;
+
+				for (int k = 0; k < n; k++) {
+					row = makeRow(vec,n,k);
+					if (isThere(row, tracker) == true) {
+
+						stor.push_back(k);
+						i = findNextY(makeRow(vec, n, k), tracker);
+						j = 0;
+
+						stor.push_back(findNextY(makeRow(vec, n, k), tracker));
+						break;
+
+					}
+				}
+
+			}
+
+			if (notPossible(row, stor) == true && stor.size() != n) {
+
+				place++;
+				i = place;
+				j = 0;
+				stor.clear();
+				stor.push_back(i);
+
+				row = makeRow(vec, n, i);
+				j = 0;
+			}
+
+			if (vec[i][j] == 'Y' && isAlreadyFound(stor, j) == true) {
+
+				continue;
+			}
+
+			else if (vec[i][j] == 'Y' && isAlreadyFound(stor, j) == false) {
+
+				if (stor.size() == 0 && vec[i][j] == 'Y' && place != n) {
+					stor.push_back(i);
+
+				}
+
+				if(isAlreadyFound(stor,j) != true){stor.push_back(j);
+				i = j;}
+
+				else{continue;}
+
+				row = makeRow(vec, n, i);
+
+				j = -1;
+
+			}
+			if (stor.size() == n) {
+				for (int i : stor) {
+					cout << i + 1 << " ";
+				}
+				return 0;
+			}
+
+		}
+
+	}
+	return 0;
+}
