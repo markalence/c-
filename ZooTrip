@@ -160,7 +160,7 @@ int main() {
 
 						stor.push_back(k);
 						i = findNextY(makeRow(vec, n, k), tracker);
-						j = 0;
+						j = -1;
 
 						stor.push_back(findNextY(makeRow(vec, n, k), tracker));
 						break;
@@ -179,7 +179,7 @@ int main() {
 				stor.push_back(i);
 
 				row = makeRow(vec, n, i);
-				j = 0;
+				j = -1;
 			}
 
 			if (vec[i][j] == 'Y' && isAlreadyFound(stor, j) == true) {
