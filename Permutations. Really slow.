@@ -1,0 +1,199 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool isFound(string x, vector<string> vec) {
+
+	bool found = false;
+
+	for (int i = 0; i < vec.size(); i++) {
+
+		if (vec[i] == x) {
+			found = true;
+		}
+
+	}
+	return found;
+
+}
+
+vector<string> removeDuplicates(vector<string> vec) {
+
+	string t = "zzzzzzzzzzzzzzzzzzz";
+	int l = vec.size();
+	vector<string> nuwe;
+
+	for (int i = 0; i < l; i++) {
+
+		for (int j = i; j < l; j++) {
+
+			if (j == i) {
+				continue;
+			}
+
+			if (vec[i] == vec[j]) {
+
+				vec[j] = t;
+			}
+
+		}
+
+	}
+
+	/*for (string i : vec){cout << i << endl;}*/
+	for (int i = 0; i < vec.size() - 1; i++) {
+
+		if (vec[i] != t) {
+			nuwe.push_back(vec[i]);
+		}
+
+	}
+
+	return nuwe;
+
+}
+
+string reverse(string x) {
+
+	string y;
+
+	for (int i = x.length() - 1; i >= 0; i--) {
+
+		y += x[i];
+	}
+
+	return y;
+
+}
+
+vector<string> mumble(string x) {
+
+	vector<string> vec;
+	int l = x.length();
+	string a = x;
+	string b = x;
+	int counter = 0;
+
+	while (counter != l - 1) {
+
+		b[0] = a[l - 1];
+
+		for (int i = 1; i < l; i++) {
+
+			b[i] = a[i - 1];
+
+		}
+
+		vec.push_back(b);
+
+		a = b;
+
+		counter++;
+	}
+
+	return vec;
+
+}
+
+vector<string> jumble(string x, vector<string> vec) {
+
+	string a = x;
+	int l = x.length();
+	int counter = 0;
+	int tracker = 0;
+	char t;
+
+	for (int i = counter;; i++) {
+
+		if (tracker == l - 1) {
+			a = x;
+			counter++;
+			i = counter;
+			tracker = 0;
+		}
+		if (counter == l) {
+			break;
+		}
+
+		if (i + 1 != l) {
+
+			t = a[i];
+			a[i] = a[i + 1];
+			a[i + 1] = t;
+
+			tracker++;
+			vec.push_back(a);
+
+		}
+
+		if (i + 1 == l) {
+
+			t = a[i];
+			a[i] = a[0];
+			a[0] = t;
+
+			tracker++;
+			vec.push_back(a);
+			i = 0;
+
+		}
+
+	}
+
+	return vec;
+
+}
+
+int main() {
+
+	vector<string> vec;
+	vector<string> buff;
+	string in;
+	cin >> in;
+	string rin = reverse(in);
+
+	vec = jumble(in, vec);
+	vec = jumble(rin, vec);
+	vec = removeDuplicates(vec);
+
+	for (int i = 0; i < vec.size(); i++) {
+
+		buff = mumble(vec[i]);
+
+		for (int j = 0; j < buff.size(); j++) {
+
+			if (isFound(buff[j], vec) == false) {
+				vec.push_back(buff[j]);
+			}
+		}
+
+	}
+
+	for (int i = 0; i < vec.size(); i++) {
+
+		vec = jumble(vec[i], vec);
+		vec = removeDuplicates(vec);
+	}
+
+	cout << "There are " << vec.size()
+			<< " permutations. Would you like to see them all? (Y/N)" << endl;
+
+	char choice;
+	cin >> choice;
+	cout << endl;
+
+	if (choice == 'Y') {
+		for (string i : vec) {
+			cout << i << endl;
+		}
+	}
+	if (choice == 'N') {
+		cout << "Lame";
+	}
+
+	return 0;
+}
