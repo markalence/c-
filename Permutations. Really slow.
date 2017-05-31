@@ -6,54 +6,74 @@
 
 using namespace std;
 
-bool isFound(string x, vector<string> vec) {
+long long factorial(int x) {
 
-	bool found = false;
+	long long prod = 1;
 
-	for (int i = 0; i < vec.size(); i++) {
+	for (int i = 1; i <= x; i++) {
 
-		if (vec[i] == x) {
-			found = true;
-		}
-
+		prod = prod * i;
 	}
-	return found;
+
+	return prod;
 
 }
 
-vector<string> removeDuplicates(vector<string> vec) {
+long long sizeRepeats(string x) {
 
-	string t = "zzzzzzzzzzzzzzzzzzz";
-	int l = vec.size();
-	vector<string> nuwe;
+	vector<char> vec;
+	vector<char> check;
+	vector<int> reps;
+	int rep;
 
-	for (int i = 0; i < l; i++) {
+	for (int j = 0; j < x.length(); j++) {
+		vec.push_back(x[j]);
+	}
 
-		for (int j = i; j < l; j++) {
+	sort(vec.begin(), vec.end());
 
-			if (j == i) {
-				continue;
+	for (int i = 0; i < x.length(); i++) {
+
+		rep = 0;
+
+		rep = count(vec.begin(), vec.end(), vec[i]);
+
+		if (binary_search(check.begin(), check.end(), vec[i]) == false) {
+
+			check.push_back(vec[i]);
+
+			if (rep > 1) {
+
+				reps.push_back(rep);
+
 			}
-
-			if (vec[i] == vec[j]) {
-
-				vec[j] = t;
-			}
-
 		}
 
 	}
 
-	/*for (string i : vec){cout << i << endl;}*/
-	for (int i = 0; i < vec.size() - 1; i++) {
+	long long c = 1;
 
-		if (vec[i] != t) {
-			nuwe.push_back(vec[i]);
-		}
+	if (reps.size() == 0) {
+		c = factorial(x.length());
+	}
+
+	for (int i = 0; i < reps.size(); i++) {
+
+		c = factorial(x.length()) / factorial(reps[i]);
 
 	}
 
-	return nuwe;
+	return c;
+
+}
+
+bool isFound(string x, vector<string> vec) {
+
+	sort(vec.begin(), vec.end());
+
+	bool found = binary_search(vec.begin(), vec.end(), x);
+
+	return found;
 
 }
 
@@ -70,10 +90,10 @@ string reverse(string x) {
 
 }
 
-vector<string> mumble(string x) {
+vector<string> mumble(string x, vector<string> vec) {
 
-	vector<string> vec;
 	int l = x.length();
+	long long fact = sizeRepeats(x);
 	string a = x;
 	string b = x;
 	int counter = 0;
@@ -88,7 +108,12 @@ vector<string> mumble(string x) {
 
 		}
 
-		vec.push_back(b);
+		if (isFound(b, vec) == false) {
+			vec.push_back(b);
+			if (vec.size() == fact) {
+				return vec;
+			}
+		}
 
 		a = b;
 
@@ -106,8 +131,13 @@ vector<string> jumble(string x, vector<string> vec) {
 	int counter = 0;
 	int tracker = 0;
 	char t;
+	long long fact = sizeRepeats(x);
 
 	for (int i = counter;; i++) {
+
+		if (vec.size() == fact) {
+			return vec;
+		}
 
 		if (tracker == l - 1) {
 			a = x;
@@ -126,7 +156,9 @@ vector<string> jumble(string x, vector<string> vec) {
 			a[i + 1] = t;
 
 			tracker++;
-			vec.push_back(a);
+			if (isFound(a, vec) == false) {
+				vec.push_back(a);
+			}
 
 		}
 
@@ -137,7 +169,9 @@ vector<string> jumble(string x, vector<string> vec) {
 			a[0] = t;
 
 			tracker++;
-			vec.push_back(a);
+			if (isFound(a, vec) == false) {
+				vec.push_back(a);
+			}
 			i = 0;
 
 		}
@@ -157,27 +191,28 @@ int main() {
 	string rin = reverse(in);
 
 	vec = jumble(in, vec);
-	vec = jumble(rin, vec);
-	vec = removeDuplicates(vec);
+
+	long long fact = sizeRepeats(rin);
 
 	for (int i = 0; i < vec.size(); i++) {
 
-		buff = mumble(vec[i]);
+		if (vec.size() == fact) {
+			break;
+		}
+		vec = mumble(vec[i], vec);
 
-		for (int j = 0; j < buff.size(); j++) {
+	}
 
-			if (isFound(buff[j], vec) == false) {
-				vec.push_back(buff[j]);
-			}
+	for (int i = 0; i < vec.size(); i++) {
+
+		if (vec.size() == fact) {
+			break;
 		}
 
-	}
-
-	for (int i = 0; i < vec.size(); i++) {
-
 		vec = jumble(vec[i], vec);
-		vec = removeDuplicates(vec);
+
 	}
+
 
 	cout << "There are " << vec.size()
 			<< " permutations. Would you like to see them all? (Y/N)" << endl;
